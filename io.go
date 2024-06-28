@@ -26,6 +26,16 @@ func NewInput(p uint) Pin {
 	return pin
 }
 
+func NewInputPin(p uint) Pin {
+	pin := Pin{
+		Number: p,
+	}
+
+	pin.direction = inDirection
+	pin = openPin(pin, false)
+	return pin
+}
+
 // NewOutput opens the given pin number for writing. The number provided should be the pin number known by the kernel
 // NewOutput also needs to know whether the pin should be initialized high (true) or low (false)
 func NewOutput(p uint, initHigh bool) Pin {
@@ -40,6 +50,15 @@ func NewOutput(p uint, initHigh bool) Pin {
 	}
 	pin.direction = outDirection
 	setDirection(pin, outDirection, initVal)
+	pin = openPin(pin, true)
+	return pin
+}
+
+func NewOutputPin(p uint) Pin {
+	pin := Pin{
+		Number: p,
+	}
+	pin.direction = outDirection
 	pin = openPin(pin, true)
 	return pin
 }
