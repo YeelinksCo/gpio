@@ -40,8 +40,7 @@ const (
 func exportGPIO(p Pin) {
 	export, err := os.OpenFile("/sys/class/gpio/export", os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Printf("failed to open gpio export file for writing\n")
-		os.Exit(1)
+		panic("failed to open gpio export file for writing")
 	}
 	defer export.Close()
 	export.Write([]byte(strconv.Itoa(int(p.Number))))
@@ -50,8 +49,7 @@ func exportGPIO(p Pin) {
 func unexportGPIO(p Pin) {
 	export, err := os.OpenFile("/sys/class/gpio/unexport", os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Printf("failed to open gpio unexport file for writing\n")
-		os.Exit(1)
+		panic("failed to open gpio unexport file for writing")
 	}
 	defer export.Close()
 	export.Write([]byte(strconv.Itoa(int(p.Number))))
@@ -60,8 +58,7 @@ func unexportGPIO(p Pin) {
 func setDirection(p Pin, d direction, initialValue uint) {
 	dir, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/direction", p.Number), os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Printf("failed to open gpio %d direction file for writing\n", p.Number)
-		os.Exit(1)
+		panic(fmt.Sprintf("failed to open gpio %d direction file for writing", p.Number))
 	}
 	defer dir.Close()
 
@@ -80,8 +77,7 @@ func setDirection(p Pin, d direction, initialValue uint) {
 func setEdgeTrigger(p Pin, e Edge) {
 	edge, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/edge", p.Number), os.O_WRONLY, 0600)
 	if err != nil {
-		fmt.Printf("failed to open gpio %d edge file for writing\n", p.Number)
-		os.Exit(1)
+		panic(fmt.Sprintf("failed to open gpio %d edge file for writing", p.Number))
 	}
 	defer edge.Close()
 
@@ -112,7 +108,7 @@ func setLogicLevel(p Pin, l LogicLevel) error {
 	case ActiveLow:
 		level.Write([]byte("1"))
 	default:
-		return errors.New("Invalid logic level setting.")
+		return errors.New("invalid logic level setting")
 	}
 	return nil
 }
@@ -124,8 +120,7 @@ func openPin(p Pin, write bool) Pin {
 	}
 	f, err := os.OpenFile(fmt.Sprintf("/sys/class/gpio/gpio%d/value", p.Number), flags, 0600)
 	if err != nil {
-		fmt.Printf("failed to open gpio %d value file for reading\n", p.Number)
-		os.Exit(1)
+		panic(fmt.Sprintf("failed to open gpio %d value file for reading", p.Number))
 	}
 	p.f = f
 	return p
